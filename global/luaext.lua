@@ -151,55 +151,39 @@ string.trim = function(s, c)
     return string.rtrim(string.ltrim(s, c), c)
 end
 
-local function dump(obj)
-    local getIndent, quoteStr, wrapKey, wrapVal, dumpObj
-    getIndent = function(level)
-        return string.rep("\t", level)
-    end
-    quoteStr = function(str)
-        return '"' .. string.gsub(str, '"', '\\"') .. '"'
-    end
-    wrapKey = function(val)
-        if type(val) == "number" then
-            return "[" .. val .. "]"
-        elseif type(val) == "string" then
-            return "[" .. quoteStr(val) .. "]"
-        else
-            return "[" .. tostring(val) .. "]"
+local function table_tostring(root)
+    local cache = { [root] = "." }
+    local function _dump(t, space, name)
+        if next(t) == nil then
+            return "{}"
         end
-    end
-    wrapVal = function(val, level)
-        if type(val) == "table" then
-            return dumpObj(val, level)
-        elseif type(val) == "number" then
-            return val
-        elseif type(val) == "string" then
-            return quoteStr(val)
-        else
-            return tostring(val)
+        local temp = {}
+        for k, v in pairs(t) do
+            local key = tostring(k)
+            local keystr = "[" .. key .. "]"
+            local valstr
+            if cache[v] then
+                valstr = "{" .. cache[v] .. "}"
+            elseif type(v) == "table" then
+                local new_key = name ..".".. key
+                cache[v] = new_key
+                valstr = _dump(v, space .. "  ", new_key)
+            else
+                valstr = tostring(v)
+            end
+
+            table.insert(temp, keystr .. " = " .. valstr)
         end
+        return "{\n" .. space .. table.concat(temp, ",\n" .. space) .. "\n" .. space:sub(1, -3) .. "}"
     end
-    dumpObj = function(obj, level)
-        if type(obj) ~= "table" then
-            return wrapVal(obj)
-        end
-        level = level + 1
-        local tokens = {}
-        tokens[#tokens + 1] = "{"
-        for k, v in pairs(obj) do
-            tokens[#tokens + 1] = getIndent(level) .. wrapKey(k) .. " = " .. wrapVal(v, level) .. ","
-        end
-        tokens[#tokens + 1] = getIndent(level - 1) .. "}"
-        return table.concat(tokens, "\n")
-    end
-    return dumpObj(obj, 0)
+    return _dump(root, "  ", "")
 end
 
 do
     local _tostring = tostring
     tostring = function(v)
         if type(v) == 'table' then
-            return dump(v)
+            return table_tostring(v)
         else
             return _tostring(v)
         end
@@ -271,5 +255,3 @@ function class(super)
 
     return class_type
 end
-
-
