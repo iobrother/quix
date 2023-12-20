@@ -2,16 +2,6 @@ local skynet = require "skynet"
 
 local log = {}
 
-local level = {
-	DEBUG = 1,
-	INFO = 2,
-	WARN = 3,
-	ERROR = 4,
-	FATAL = 5,
-}
-
-local log_level = level.INFO
-
 local function log_tostring(log_tbl, sep)
     if sep == nil then
         sep = " "
@@ -25,10 +15,6 @@ local function log_tostring(log_tbl, sep)
         table.insert(t, v)
     end
     return table.concat(t, sep)
-end
-
-function log.set_level(lv)
-	log_level = level[lv] or log_level
 end
 
 function log.debug(...)

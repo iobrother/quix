@@ -18,7 +18,7 @@ local LEVEL = {
 	SKYNET = 5,
 }
 
-local log_level = LEVEL[loglevel]
+local log_level = LEVEL[loglevel] or LEVEL.INFO
 
 local CMD = {}
 
