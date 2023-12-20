@@ -1,4 +1,5 @@
 local skynet = require "skynet"
+local tableutil = require "util.table"
 
 local log = {}
 
@@ -9,7 +10,9 @@ local function log_tostring(log_tbl, sep)
 
     local t = {}
     for _, v in pairs(log_tbl) do
-        if type(v) ~= "string" then
+		if type(v) == "table" then
+			v = tableutil.tostring(v)
+		elseif type(v) ~= "string" then
             v = tostring(v)
         end
         table.insert(t, v)

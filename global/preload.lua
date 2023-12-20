@@ -1,2 +1,1 @@
-require "luaext"
 require "def"
