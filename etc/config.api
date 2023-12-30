@@ -1,0 +1,33 @@
+skynetroot = "./skynet/"
+thread = 8
+harbor = 0
+bootstrap = "snlua bootstrap"
+start = "apid"
+
+-- daemon = "./run/apid.pid"
+
+logger = "logger"
+logservice = "snlua"
+logpath = "log/"
+logname = "apid.log"
+
+preload = "./global/preload.lua"
+lualoader = "./skynet/lualib/loader.lua"
+
+-- 配置LUA服务搜索路径
+api_server = "./service/api_server/?.lua;" .. "./service/api_server/?/init.lua;"
+luaservice = "./service/?.lua;" .. "./service/common/?.lua;" .. api_server .. "./skynet/service/?.lua"
+
+-- 配置C服务搜索索路径
+cpath = "./cservice/?.so;" .. "./skynet/cservice/?.so"
+
+-- 配置require搜索路径
+lua_path =  "./global/?.lua;" .. "./lualib/?.lua;" .. "./skynet/lualib/?.lua"
+lua_cpath = "./luaclib/?.so;" .. "./skynet/luaclib/?.so"
+
+api_port = 2080
+
+-- 集群名称配置文件
+cluster = "./etc/clustername.lua"
+nodename = "api"
+

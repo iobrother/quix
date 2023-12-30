@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package room;
+
+message MatchReq {
+}
+
+message MatchRsp {
+
+}
+
+message CreateReq {
+
+}
+
+message CreateRsp {
+
+}
+
+message JoinReq {
+
+}
+
+message JoinRsp {
+
+}
+
+message QuitReq {
+
+}
+
+message QuitRsp {
+    
+}

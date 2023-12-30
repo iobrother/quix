@@ -1,0 +1,32 @@
+skynetroot = "./skynet/"
+thread = 8
+harbor = 0
+bootstrap = "snlua bootstrap"
+start = "scened"
+
+-- daemon = "./run/scened.pid"
+
+logger = "logger"
+logservice = "snlua"
+logpath = "log/"
+logname = "scened.log"
+
+preload = "./global/preload.lua"
+lualoader = "./skynet/lualib/loader.lua"
+
+-- 配置LUA服务搜索路径
+scene_server = "./service/scene_server/?.lua;" .. "./service/scene_server/?/init.lua;"
+luaservice = "./service/?.lua;" .. "./service/common/?.lua;" .. scene_server .. "./skynet/service/?.lua"
+
+-- 配置C服务搜索索路径
+cpath = "./cservice/?.so;" .. "./skynet/cservice/?.so"
+
+-- 配置require搜索路径
+lua_path =  "./global/?.lua;" .. "./lualib/?.lua;" .. "./skynet/lualib/?.lua"
+lua_cpath = "./luaclib/?.so;" .. "./skynet/luaclib/?.so"
+
+-- 集群名称配置文件
+cluster = "./etc/clustername.lua"
+nodename = "scene"
+
+debug_port = 8004                       -- for debug_console service

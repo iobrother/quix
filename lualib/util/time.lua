@@ -1,7 +1,7 @@
 local M = {}
 
 -- 获取下一个整点时间戳
-function M.get_next_hour()
+function M.get_next_hour_zero()
     local now = os.date("*t")
     local cur_hour = {
         year = now.year,
@@ -15,7 +15,7 @@ function M.get_next_hour()
 end
 
 -- 获取下一天某个整点时间戳
-function M.get_next_day(hour)
+function M.get_next_day_zero(hour)
     if not hour then
         hour = 0
     end
@@ -32,7 +32,7 @@ function M.get_next_day(hour)
     return os.time(cur_day) + 86400
 end
 
-function M.get_next_week()
+function M.get_next_week_zero()
     local now = os.date("*t")
     local days = now.wday == 1 and 1 or 9 - now.wday
     local cur_day = {
@@ -47,7 +47,7 @@ function M.get_next_week()
     return os.time(cur_day) + 86400 * days
 end
 
-function M.get_next_month()
+function M.get_next_month_zero()
     local now = os.date("*t")
     local next_month = {
         year = now.year,

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pm;
+
+message PmReq {
+  string args = 1;
+}
+
+message PmRsp {
+
+}

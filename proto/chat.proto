@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package chat;
+
+
+// 消息类型 
+enum MsgType {
+  eMT_NONE = 0;
+	eMT_TEXT = 1;
+  eMT_IMAGE = 2;
+  eMT_AUDIO = 3;
+  eMT_VIDEO = 4;
+  eMT_FILE = 5;
+  eMT_LOCATION = 7;
+  eMT_QUOTE = 8;      // 引用消息
+  eMT_MERGER = 9;     // 合并消息
+  eMT_TIP = 10;       // 提示消息
+  eMT_RECALL = 11;    // 撤回消息
+};
+
+// 聊天频道
+enum ChannelType {
+	eCT_NONE = 0;
+	eCT_NOTICE = 1;      // 全服公告
+	eCT_GLOBAL = 2;      // 全服
+	eCT_PRIVATE = 3;     // 私聊
+	eCT_GROUP = 4;       // 群聊
+	eCT_LEAGUE = 5;      // 联盟
+};
+
+// 服务端推送给客户端的消息
+message Msg {
+  int64 id = 1;             // 序号
+  int32 type = 2;           // 消息类型
+  int32 channel_type = 3;   // 频道类型
+  int64 from = 4;           // 发送者
+  int64 to = 5;             // 接收者
+  string from_name = 6;     // 发送方名称
+  string from_avatar = 7;   // 发送方头像
+  string content = 8;       // 内容
+  int64 send_time = 9;      // 发送时间
+  int64 read_time = 10;     // 读取时间
+  int32 flag = 11;          // 标记
+  int32 language = 12;      // 语言
+  string extend = 13;       // 扩展(以JSON格式存储)
+}
+
+message SendReq {
+  int32 channel_type = 1;
+  int32 msg_type = 2;
+  int64 to = 3;
+  string content = 4;
+  string client_uuid = 5;
+}
+
+message SendRsp {
+  int64 id = 1;
+  int64 send_time = 2;
+  string client_uuid = 3;
+}
+
+message MsgAckReq {
+  int64 id = 1;
+}
+
+message MsgAckRsp {
+}
+
+message SyncMsgReq {
+  int64 offset = 1; // offset为本地最近一条消息的发送时间
+  int64 limit = 2;
+}
+
+message SyncMsgRsp {
+  repeated Msg list = 1;
+}
+
+message DeleteMsgReq {
+  int64 uid = 1;
+  repeated int64 ids = 2;
+}
+
+message DeleteMsgRsp {
+}
+
+// 创建群
+message CreateChannelReq {
+
+}
+
+message CreateChannelRsp {
+
+}

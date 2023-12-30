@@ -2,29 +2,21 @@ skynetroot = "./skynet/"
 thread = 8
 harbor = 0
 bootstrap = "snlua bootstrap"
-start = "main"
+start = "dbd"
 
--- daemon = "./run/quix.pid"
+-- daemon = "./run/dbd.pid"
 
 logger = "logger"
 logservice = "snlua"
 logpath = "log/"
-loglevel = "INFO"
-logname = "quix.log"
+logname = "dbd.log"
 
 preload = "./global/preload.lua"
 lualoader = "./skynet/lualib/loader.lua"
 
 -- 配置LUA服务搜索路径
-api_server = "./service/api_server/?.lua;" .. "./service/api_server/?/init.lua;"
 db_server = "./service/db_server/?.lua;"
-game_server = "./service/game_server/?.lua;" .. "./service/game_server/?/init.lua;"
-scene_server = "./service/scene_server/?.lua;" .. "./service/scene_server/?/init.lua;"
-center_server = "./service/center_server/?.lua;" .. "./service/center_server/?/init.lua;"
-im_server = "./service/im_server/?.lua;" .. "./service/im_server/?/init.lua;"
-luaservice = "./service/?.lua;" .. "./service/common/?.lua;" ..
-             db_server .. api_server .. game_server .. scene_server .. center_server .. im_server ..
-             "./skynet/service/?.lua"
+luaservice = "./service/?.lua;" .. "./service/common/?.lua;" .. db_server .. "./skynet/service/?.lua"
 
 -- 配置C服务搜索索路径
 cpath = "./cservice/?.so;" .. "./skynet/cservice/?.so"
@@ -33,21 +25,21 @@ cpath = "./cservice/?.so;" .. "./skynet/cservice/?.so"
 lua_path =  "./global/?.lua;" .. "./lualib/?.lua;" .. "./skynet/lualib/?.lua"
 lua_cpath = "./luaclib/?.so;" .. "./skynet/luaclib/?.so"
 
-
-debug_port = 8000                       -- for debug_console service
-api_port = 2080
-ws_port = 2188
-maxclient = 10000
-
 mysql_maxconn = 10                      -- mysql数据库最大连接数
-mysql_host = "127.0.0.1"            -- mysql数据库主机
+mysql_host = "127.0.0.1"                -- mysql数据库主机
 mysql_port = 3306                       -- mysql数据库端口
 mysql_db = "quix"                       -- mysql数据库库名
 mysql_user = "root"                     -- mysql数据库帐号
 mysql_pwd = "123456"                    -- mysql数据库密码
 
 redis_maxconn = 10                      -- redis最大连接数
-redis_host = "127.0.0.1"            -- redis数据库IP
+redis_host = "127.0.0.1"                -- redis数据库IP
 redis_port = 6379                       -- redis数据库端口
 redis_db = 0
 redis_auth = "123456"                   -- redis数据库密码
+
+-- 集群名称配置文件
+cluster = "./etc/clustername.lua"
+nodename = "db"
+
+debug_port = 8002                       -- for debug_console service

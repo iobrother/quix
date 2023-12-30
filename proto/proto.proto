@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto;
+
+message Msg {
+  int32 seq = 1;
+  string cmd = 2;
+  bytes payload = 3;
+}
+
+message Error {
+  int32 code = 1;
+  string message = 2;
+}
+
+message Noop {
+  
+}
+
+message Kick {
+  string reason = 1;
+}

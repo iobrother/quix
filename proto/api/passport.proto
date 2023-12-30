@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package passport;
+
+message SendSmsReq {
+  string mobile = 1;
+}
+
+message SendSmsRsp {
+  string code = 1;
+}
+
+// 短信验证码登录
+message SmsLoginReq {
+  string mobile = 1;
+  string code = 2;
+  string device_id = 3;
+}
+
+message SmsLoginRsp {
+  int64 uid = 1;
+  string token = 2;
+  bool is_signup = 3;
+  int64 expires_at = 4;
+}
+
+// 帐号密码登录
+message LoginReq {
+  // 登录类型 1: 手机 2: email 3: 玩家ID
+  int32 type = 1;
+  string account = 2;
+  string password = 3;
+  string device_id = 4;
+}
+
+message LoginRsp {
+  int64 uid = 1;
+  string token = 2;
+  int64 expires_at = 3;
+}
+
+message GuestLoginReq {
+  // 可以用uuid作为唯一标识
+  string openid = 1;
+  string device_id = 2;
+}
+
+message GuestLoginRsp {
+  int64 uid = 1;
+  string token = 2;
+  bool is_signup = 3;
+  int64 expires_at = 4;
+}
+
+message OauthLoginReq {
+  int32 platform = 1;
+  string code = 2;
+  string device_id = 3;
+}
+
+message OauthLoginRsp {
+  int64 uid = 1;
+  string token = 2;
+  bool is_signup = 3;
+  int64 expires_at = 4;
+}

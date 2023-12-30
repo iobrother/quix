@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package login;
+
+message LoginReq {
+  int32 type = 1;
+  int64 uid = 2;
+  string token = 3;
+  string platform = 4;  // web android iOS
+  string device_id = 5;
+  string device_name = 6;
+  string device_model = 7;
+  string app_version = 8;
+  string res_version = 9;
+}
+
+message LoginRsp {
+  int64 uid = 1;
+}
