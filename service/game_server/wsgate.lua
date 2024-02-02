@@ -52,7 +52,10 @@ local function close_internal(fd)
     end
     local player = players[uid]
     if player then
-        util.pcall(skynet.call, player.agent, "lua", "afk")
+        local ok, err = util.pcall(skynet.call, player.agent, "lua", "afk")
+        if not ok then
+            log.error(err)
+        end
         player.fd = 0
         player.expiration = skynet.now() + 100*3600 -- 缓存一个小时
         cache_players[uid] = player
@@ -112,22 +115,23 @@ function handle.message(fd, msg, msg_type)
         local ok, m, req
         ok, m = util.pcall(pb.decode, "proto.Msg", msg)
         if not ok then
-            log.error("pb decode error")
+            log.error("pb decode error", m)
             close_internal(fd)
             return
         end
         ok, req = util.pcall(pb.decode, m.cmd, m.payload)
         if not ok then
-            log.error("pb decode error")
+            log.error("pb decode error", req)
             close_internal(fd)
             return
         end
 
+        LOG("req =", req)
         local login = skynet.uniqueservice "login"
         local rsp, err
         ok, rsp, err = util.pcall(skynet.call, login, "lua", "login", req)
         if not ok then
-            log.error("登录失败:", err)
+            log.error("登录失败:", rsp)
             close_internal(fd)
             return
         end
@@ -149,18 +153,18 @@ function handle.message(fd, msg, msg_type)
                     agent = skynet.newservice "agent"
                 end
                 player = {uid=uid, fd=fd, device_id=req.device_id, agent=agent}
-                ok = util.pcall(skynet.call, agent, "lua", "load", uid)
+                ok, err = util.pcall(skynet.call, agent, "lua", "load", uid)
                 if not ok then
-                    log.error("加载玩家数据失败")
+                    log.error("加载玩家数据失败", err)
                     skynet.send(agent, "lua", "exit")
                     close_internal(fd)
                     return
                 end
             end
 
-            ok = util.pcall(skynet.call, agent, "lua", "login", uid, fd, req.device_id)
+            ok, err = util.pcall(skynet.call, agent, "lua", "login", uid, fd, req.device_id)
             if not ok then
-                log.error("登录到agent失败")
+                log.error("登录到agent失败", err)
                 close_internal(fd)
                 return
             end
@@ -177,9 +181,10 @@ function handle.message(fd, msg, msg_type)
             }))
             CMD.write(fd, msg)
 
-            ok = util.pcall(skynet.call, agent, "lua", "online")
+            ok, err = util.pcall(skynet.call, agent, "lua", "online")
             if not ok then
                 close_internal(fd)
+                log.error(err)
                 return
             end
         else
@@ -242,9 +247,9 @@ function CMD.get_player(uid)
         agent = skynet.newservice "agent"
     end
     local player = {uid=uid, agent=agent}
-    local ok = util.pcall(skynet.call, agent, "lua", "load", uid)
+    local ok, err = util.pcall(skynet.call, agent, "lua", "load", uid)
     if not ok then
-        log.error("加载玩家数据失败")
+        log.error("加载玩家数据失败", err)
         skynet.send(agent, "lua", "exit")
         return nil
     end
@@ -269,8 +274,14 @@ end
 function CMD.logout(uid)
     local player = players[uid]
     if player then
-        table.insert(agent_pool, player.agent)
+        -- table.insert(agent_pool, player.agent)
         websocket.close(player.fd)
+        connections[player.fd] = nil
+        players[uid] = nil
+        cur_client = cur_client - 1
+        player.fd = 0
+        player.expiration = skynet.now() + 100*3600 -- 缓存一个小时
+        cache_players[uid] = player
     end
 end
 
@@ -284,13 +295,13 @@ function CMD.kick(uid, reason)
             cmd = "proto.Kick",
             payload = payload
         }))
-        websocket.write(player.fd, msg)
+        websocket.write(player.fd, msg, "binary")
         websocket.close(player.fd)
     end
 end
 
 local function clear_players()
-    skynet.timeout(100*1, clear_players)
+    skynet.timeout(100*300, clear_players)
     local now = skynet.now()
     for uid, player in pairs(cache_players) do
         if now>= player.expiration then

@@ -140,13 +140,12 @@ local function table_tostring(root)
         end
         local temp = {}
         for k, v in pairs(t) do
-            local key = tostring(k)
-            local keystr = wrapKey(key)
+            local keystr = wrapKey(k)
             local valstr
             if cache[v] then
                 valstr = "{" .. cache[v] .. "}"
             elseif type(v) == "table" then
-                local new_key = name ..".".. key
+                local new_key = name ..".".. tostring(k)
                 cache[v] = new_key
                 valstr = _dump(v, space .. "  ", new_key)
             else
