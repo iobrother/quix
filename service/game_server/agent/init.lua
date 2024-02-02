@@ -63,6 +63,7 @@ local function logout()
     -- timer:cancel(ai_timer_id)
     -- timer:cancel(backup_timer_id)
 
+    service.method.onPlayerOffline()
     service.method.onBackup()
     heartbeat_check_flag = false
 	--这里不退出agent服务，以便agent能复用
@@ -71,6 +72,7 @@ end
 
 local function kick(reason)
     skynet.call(".wsgate", "lua", "kick", UID, reason)
+    service.method.onPlayerOffline()
     service.method.onBackup()
     heartbeat_check_flag = false
 end
@@ -200,8 +202,8 @@ function service.cmd.afk()
         heartbeat_timer_id = nil
     end
 	LOG("AFK")
-    service.method.onBackup()
     service.method.onPlayerOffline()
+    service.method.onBackup()
 
     -- 登录时长记录
     if not DEVICE_ID then
